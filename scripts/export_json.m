@@ -4,15 +4,12 @@ function export_json()
 if isequal(file, 0), return; end
 f = fullfile(path, file);
 [~, name, ext] = fileparts(file);
-
-% Output path
 outdir = fullfile(path, [name, '_json']);
 if ~exist(outdir, 'dir'); mkdir(outdir); end
 outfile = fullfile(outdir, 'report.json');
 
 isDB = strcmpi(ext, '.db');
 
-%% Caricamento dati
 if isDB
     conn = sqlite(f);
     rows = fetch(conn, ['SELECT p.patient_id, p.sex, p.age, ', ...
@@ -29,10 +26,8 @@ if isDB
     S = cell2struct(table2cell(rows)', vars, 1);
 
 else
-    % Leggi Excel
     T = readtable(f, 'PreserveVariableNames', true);
 
-    % Rinomina se ha nomi generici
     if all(startsWith(T.Properties.VariableNames, "Var"))
         old = compose("Var%d", 1:31);
         new = ["anno","azienda","istituto","disciplina","progressivo_reparto", ...
@@ -45,7 +40,6 @@ else
         T = renamevars(T, old, new);
     end
 
-    % Crea la struttura
     n = height(T);
     S = struct('patient_id', {}, 'sex', {}, 'age', {}, 'primary_diagnosis', {}, ...
                'secondary_diagnoses', {}, 'procedures', {}, 'discharge_status', {}, ...
@@ -73,7 +67,6 @@ else
     end
 end
 
-%% Genera JSON
 report = struct('hospital_id', 'OSPEDALE1', 'cases', {S});
 jsonStr = jsonencode(report, 'PrettyPrint', true);
 
@@ -81,5 +74,5 @@ fid = fopen(outfile, 'w');
 fwrite(fid, jsonStr, 'char'); 
 fclose(fid);
 
-fprintf('✅ JSON salvato in %s\n', outfile);
+fprintf('JSON saved to %s\n', outfile);
 end

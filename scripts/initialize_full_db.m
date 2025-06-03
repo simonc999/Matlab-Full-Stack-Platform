@@ -1,14 +1,11 @@
 function initialize_full_db(dbfile)
-% Crea il database e lo schema se non esiste. Chiede se sovrascrivere dati esistenti.
 
 if ~isfile(dbfile)
-    % File inesistente → creazione completa
     create_schema(dbfile, {'patients','admissions','users'});
-    disp('✅ Database creato da zero.');
+    disp('No db found, created new db successfully.');
     return;
 end
 
-% Controlla presenza dati
 conn = sqlite(dbfile);
 tables = {'patients','admissions'};
 hasData = false(1, numel(tables));
@@ -18,37 +15,35 @@ for i = 1:numel(tables)
         r = fetch(conn, sprintf('SELECT 1 FROM %s LIMIT 1', tables{i}));
         hasData(i) = ~isempty(r);
     catch
-        hasData(i) = false;  % tabella non esiste
+        hasData(i) = false;  
     end
 end
 close(conn);
 
-% Se nessun dato trovato → crea tutto da zero
 if ~any(hasData)
     create_schema(dbfile, {'patients','admissions'});
-    disp('✅ Database inizializzato da zero (nessun dato trovato).');
+    disp('No data found, created new db successfully.');
     return;
 end
 
 % GUI per scegliere quali tabelle sovrascrivere
 toDrop = listdlg( ...
-    'PromptString','⚠️ Dati trovati nel database. Seleziona le tabelle da sovrascrivere:', ...
+    'PromptString','Data found. Select tables to overwrite:', ...
     'SelectionMode','multiple', ...
     'ListString', tables, ...
-    'Name','Database trovato', ...
+    'Name','DB detection', ...
     'ListSize',[250,100]);
 
 if isempty(toDrop)
-    disp('⚠️ Nessuna tabella selezionata. Il database esistente è stato mantenuto.');
+    disp('No table selected. Using old db.');
     return;
 end
 
 create_schema(dbfile, tables(toDrop));
-fprintf('✅ Tabelle sovrascritte: %s\n', strjoin(tables(toDrop), ', '));
+fprintf('Tables overwrited successfully: %s\n', strjoin(tables(toDrop), ', '));
 end
 
 function create_schema(dbfile, tablesToCreate)
-% Scrive lo schema SQL solo per le tabelle richieste
 
 schema = {};
 if any(strcmp(tablesToCreate, 'patients'))
@@ -81,7 +76,7 @@ if any(strcmp(tablesToCreate, 'users'))
     "username TEXT PRIMARY KEY, passhash TEXT);";
     schema{end+1} = ...
     "INSERT OR IGNORE INTO users VALUES ('admin', " + ...
-    "'8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918');";
+    "'8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918');"; % admin
 end
 
 fid = fopen('temp_schema.sql', 'w');

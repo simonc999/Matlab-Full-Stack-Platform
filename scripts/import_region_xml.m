@@ -1,5 +1,4 @@
 function import_region_xml(xmlfile, dbfile)
-%%IMPORT_REGION_XML  Parse ICP/ICM values and store in DB
 xDoc = xmlread(xmlfile);
 ICP = str2double(xDoc.getElementsByTagName('ICP').item(0).getTextContent);
 ICM = str2double(xDoc.getElementsByTagName('ICM').item(0).getTextContent);

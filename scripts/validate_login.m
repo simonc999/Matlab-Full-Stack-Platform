@@ -2,18 +2,17 @@ function ok = validate_login(user, pass, dbfile)
     ok = false;
 
     if isempty(strtrim(user)) || isempty(strtrim(pass))
-        fprintf('❌ Username o password vuoti. Riprova.\n');
+        fprintf('Empty username or password. Retry.\n');
         return;
     end
 
     if ~isfile(dbfile)
-        fprintf('❌ Database non trovato: %s\n', dbfile);
+        fprintf('Db not found: %s\n', dbfile);
         return;
     end
 
     passhash = hash_str(pass);
 
-    % Query SQL
     sql = sprintf(['SELECT 1 FROM users WHERE username = ''%s'' ', ...
                    'AND passhash = ''%s'' LIMIT 1;'], user, passhash);
 
@@ -21,13 +20,13 @@ function ok = validate_login(user, pass, dbfile)
     [status, result] = system(cmd);
 
     if status ~= 0
-        fprintf('❌ Errore durante accesso al database.\n');
+        fprintf('DB access error.\n');
         return;
     end
 
     if ~isempty(strtrim(result))
         ok = true;
     else
-        fprintf('❌ Username o password errati.\n');
+        fprintf('Wrong username or password.\n');
     end
 end

@@ -1,4 +1,3 @@
-% Main entry point for the Hospital Management application
 clear; clc;
 project_root = fileparts(mfilename('fullpath'));
 addpath(genpath(fullfile(project_root,'scripts')));
@@ -19,23 +18,22 @@ max_attempts = 3;
 for attempt = 1:max_attempts
     credenziali = inputdlg({'Username:', 'Password:'}, 'Login', [1 35]);
     if isempty(credenziali)
-        disp('❌ Login annullato.');
+        disp('Login closed.');
         return;
     end
     username = strtrim(credenziali{1});
     password = strtrim(credenziali{2});
 
     if validate_login(username, password, dbfile)
-        disp('✅ Login successful!');
+        disp('Login successful.');
         break;
     end
 
     if attempt == max_attempts
-        error('❌ Troppi tentativi falliti. Bye!');
+        error('Reached max n attempts.');
     end
 end
 
-% Main menu loop
 while true
     choice = menu('Hospital Management', ...
         'Load hospital data into DB', ...
