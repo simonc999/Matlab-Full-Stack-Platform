@@ -1,0 +1,24 @@
+<!-- Minimal XSD for HospitalDiabetesReport -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="HospitalDiabetesReport">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Patient" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence/>
+            <xs:attribute name="id" type="xs:int" use="required"/>
+            <xs:attribute name="a1" type="xs:float" use="required"/>
+            <xs:attribute name="k1" type="xs:float" use="required"/>
+            <xs:attribute name="a2" type="xs:float" use="required"/>
+            <xs:attribute name="k2" type="xs:float" use="required"/>
+            <xs:attribute name="g0" type="xs:float" use="required"/>
+            <xs:attribute name="peak" type="xs:float" use="required"/>
+            <xs:attribute name="t_peak" type="xs:float" use="required"/>
+            <xs:attribute name="auc0_5" type="xs:float" use="required"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="hospital_id" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
